@@ -17,7 +17,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>React Node Template by Dhanush.....</h1>
+        <h1>React Node Template by Dhanush......</h1>
         <p>
           <a
             className="App-link"
