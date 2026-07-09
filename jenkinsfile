@@ -7,77 +7,96 @@ pipeline {
         choice(
             name: 'BRANCH_NAME',
             choices: ['main', 'dev'],
-            description: 'Select the branch to deploy'
+            description: 'Select branch to deploy'
         )
 
     }
 
     stages {
 
-        stage('Deploy to Ubuntu') {
+        stage('Deploy Application') {
 
             steps {
 
                 sshPublisher(
                     publishers: [
                         sshPublisherDesc(
-                            configName: 'ubuntu',
+
+                            configName: 'Ubuntu',
+
                             verbose: true,
+
                             transfers: [
+
                                 sshTransfer(
 
-                                    execCommand: '''
+                                    execCommand: """
+#!/bin/bash
 
-                                    echo "===================================="
-                                    echo "Deploy Started"
-                                    echo "===================================="
+set -e
 
-                                    cd /home/master/project/full-stack-project
+echo "====================================="
+echo "Starting Deployment"
+echo "Branch : ${params.BRANCH_NAME}"
+echo "====================================="
 
-                                    echo "Selected Branch : ${BRANCH_NAME}"
+cd /home/master/project/full-stack-project
 
-                                    git fetch origin
+echo "Fetching latest code..."
 
-                                    git reset --hard HEAD
+git fetch origin
 
-                                    git clean -fd
+git checkout ${params.BRANCH_NAME}
 
-                                    git checkout ${BRANCH_NAME}
+git reset --hard origin/${params.BRANCH_NAME}
 
-                                    git pull origin ${BRANCH_NAME}
+echo "Installing Backend Dependencies..."
 
-                                    echo "Building Frontend"
+cd src/server
 
-                                    cd src/client
+npm install
 
-                                    npm install
+echo "Installing Frontend Dependencies..."
 
-                                    npm run build
+cd ../client
 
-                                    sudo rm -rf /var/www/fullstack/*
+npm install
 
-                                    sudo cp -r build/* /var/www/fullstack/
+echo "Building React Application..."
 
-                                    echo "Building Backend"
+rm -rf build
 
-                                    cd ../server
+npm run build
 
-                                    npm install
+echo "Updating Nginx..."
 
-                                    pm2 restart fullstack-backend
+rm -rf /var/www/fullstack/*
 
-                                    sudo systemctl reload nginx
+cp -r build/* /var/www/fullstack/
 
-                                    echo "===================================="
-                                    echo "Deployment Successful"
-                                    echo "===================================="
+echo "Restarting Backend..."
 
-                                    '''
+cd ../server
+
+pm2 restart fullstack-backend
+
+echo "Reloading Nginx..."
+
+sudo systemctl reload nginx
+
+echo "====================================="
+echo "Deployment Successful"
+echo "====================================="
+"""
 
                                 )
+
                             ]
+
                         )
+
                     ]
+
                 )
 
             }
