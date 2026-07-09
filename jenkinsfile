@@ -1,0 +1,89 @@
+pipeline {
+
+    agent any
+
+    parameters {
+
+        choice(
+            name: 'BRANCH_NAME',
+            choices: ['main', 'dev'],
+            description: 'Select the branch to deploy'
+        )
+
+    }
+
+    stages {
+
+        stage('Deploy to Ubuntu') {
+
+            steps {
+
+                sshPublisher(
+                    publishers: [
+                        sshPublisherDesc(
+                            configName: 'Ubuntu',
+                            verbose: true,
+                            transfers: [
+                                sshTransfer(
+
+                                    execCommand: '''
+
+                                    echo "===================================="
+                                    echo "Deploy Started"
+                                    echo "===================================="
+
+                                    cd /home/master/project/full-stack-project
+
+                                    echo "Selected Branch : ${BRANCH_NAME}"
+
+                                    git fetch origin
+
+                                    git reset --hard HEAD
+
+                                    git clean -fd
+
+                                    git checkout ${BRANCH_NAME}
+
+                                    git pull origin ${BRANCH_NAME}
+
+                                    echo "Building Frontend"
+
+                                    cd src/client
+
+                                    npm install
+
+                                    npm run build
+
+                                    sudo rm -rf /var/www/fullstack/*
+
+                                    sudo cp -r build/* /var/www/fullstack/
+
+                                    echo "Building Backend"
+
+                                    cd ../server
+
+                                    npm install
+
+                                    pm2 restart fullstack-backend
+
+                                    sudo systemctl reload nginx
+
+                                    echo "===================================="
+                                    echo "Deployment Successful"
+                                    echo "===================================="
+
+                                    '''
+
+                                )
+                            ]
+                        )
+                    ]
+                )
+
+            }
+
+        }
+
+    }
+
+}
