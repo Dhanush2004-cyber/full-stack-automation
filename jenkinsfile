@@ -21,7 +21,7 @@ pipeline {
                 sshPublisher(
                     publishers: [
                         sshPublisherDesc(
-                            configName: 'Ubuntu',
+                            configName: 'ubuntu',
                             verbose: true,
                             transfers: [
                                 sshTransfer(
