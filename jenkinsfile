@@ -78,7 +78,16 @@ echo "Restarting Backend..."
 
 cd ../server
 
-pm2 restart full-stack-backend
+
+if pm2 describe full-stack-backend > /dev/null; then
+    echo "Restarting PM2 application..."
+    pm2 restart full-stack-backend
+else
+    echo "Starting PM2 application..."
+    pm2 start bin/www --name full-stack-backend
+fi
+
+pm2 save
 
 echo "Reloading Nginx..."
 
