@@ -78,7 +78,7 @@ echo "Restarting Backend..."
 
 cd ../server
 
-pm2 restart fullstack-backend
+pm2 restart full-stack-backend
 
 echo "Reloading Nginx..."
 
