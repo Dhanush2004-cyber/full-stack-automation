@@ -40,7 +40,7 @@ echo "Starting Deployment"
 echo "Branch : ${params.BRANCH_NAME}"
 echo "====================================="
 
-cd /home/master/project/full-stack-project
+cd /home/master/project/full-stack-automation
 
 echo "Fetching latest code..."
 
