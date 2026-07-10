@@ -4,7 +4,7 @@ const router = express.Router();
 /* GET users listing. */
 router.get("/users", function(req, res, next) {
   console.log('get "users" route hit');
-  res.send({ users: ["joe", "bernie", "tulsi", "donald", "bill", "dhanush"] });
+  res.send({ users: ["joe", "bernie", "tulsi", "donald", "bill", "dhanush"]});
 });
 
 module.exports = router;
