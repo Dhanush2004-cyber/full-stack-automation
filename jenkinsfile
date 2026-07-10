@@ -70,15 +70,15 @@ npm run build
 
 echo "Updating Nginx..."
 
-rm -rf /var/www/fullstack/*
+sudo rm -rf /var/www/fullstack/*
 
-cp -r build/* /var/www/fullstack/
+sudo cp -r build/* /var/www/fullstack/
 
 echo "Restarting Backend..."
 
 cd ../server
 
-pm2 restart fullstack-backend
+pm2 restart full-stack-backend
 
 echo "Reloading Nginx..."
 
