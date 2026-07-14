@@ -31,73 +31,73 @@ pipeline {
                                 sshTransfer(
 
                                     execCommand: """
-#!/bin/bash
+                                    #!/bin/bash
 
-set -e
+                                    set -e
 
-echo "====================================="
-echo "Starting Deployment"
-echo "Branch : ${params.BRANCH_NAME}"
-echo "====================================="
+                                    echo "====================================="
+                                    echo "Starting Deployment"
+                                    echo "Branch : ${params.BRANCH_NAME}"
+                                    echo "====================================="
 
-cd /home/master/project/full-stack-automation
+                                    cd /home/master/project/full-stack-automation
 
-echo "Fetching latest code..."
+                                    echo "Fetching latest code..."
 
-git fetch origin
+                                    git fetch origin
 
-git checkout ${params.BRANCH_NAME}
+                                    git checkout ${params.BRANCH_NAME}
 
-git reset --hard origin/${params.BRANCH_NAME}
+                                    git reset --hard origin/${params.BRANCH_NAME}
 
-echo "Installing Backend Dependencies..."
+                                    echo "Installing Backend Dependencies..."
 
-cd src/server
+                                    cd src/server
 
-npm install
+                                    npm install
 
-echo "Installing Frontend Dependencies..."
+                                    echo "Installing Frontend Dependencies..."
 
-cd ../client
+                                    cd ../client
 
-npm install
+                                    npm install
 
-echo "Building React Application..."
+                                    echo "Building React Application..."
 
-rm -rf build
+                                    rm -rf build
 
-npm run build
+                                    npm run build
 
-echo "Updating Nginx..."
+                                    echo "Updating Nginx..."
 
-sudo rm -rf /var/www/fullstack/*
+                                    sudo rm -rf /var/www/fullstack/*
 
-sudo cp -r build/* /var/www/fullstack/
+                                    sudo cp -r build/* /var/www/fullstack/
 
-echo "Restarting Backend..."
+                                    echo "Restarting Backend..."
 
-cd ../server
-
-
-if pm2 describe full-stack-backend > /dev/null; then
-    echo "Restarting PM2 application..."
-    pm2 restart full-stack-backend
-else
-    echo "Starting PM2 application..."
-    pm2 start bin/www --name full-stack-backend
-fi
-
-pm2 save
+                                    cd ../server
 
 
-echo "Reloading Nginx..."
+                                    if pm2 describe full-stack-backend > /dev/null; then
+                                        echo "Restarting PM2 application..."
+                                        pm2 restart full-stack-backend
+                                    else
+                                        echo "Starting PM2 application..."
+                                        pm2 start bin/www --name full-stack-backend
+                                    fi
 
-sudo systemctl reload nginx
+                                    pm2 save
 
-echo "====================================="
-echo "Deployment Successful"
-echo "====================================="
-"""
+
+                                    echo "Reloading Nginx..."
+
+                                    sudo systemctl reload nginx
+
+                                    echo "====================================="
+                                    echo "Deployment Successful"
+                                    echo "====================================="
+                                    """
 
                                 )
 
